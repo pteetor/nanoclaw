@@ -14,7 +14,7 @@ import {
   InMemorySessionService,
 } from '@google/adk';
 import { z } from 'zod';
-import { McpClient } from '@modelcontextprotocol/sdk/client/index.js';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 interface ContainerInput {
@@ -155,7 +155,7 @@ async function createMcpTools(mcpServerPath: string, env: Record<string, string>
     env,
   });
 
-  const client = new McpClient({
+  const client = new Client({
     name: 'maxwell-agent-runner',
     version: '1.0.0',
   }, {
@@ -165,15 +165,9 @@ async function createMcpTools(mcpServerPath: string, env: Record<string, string>
   await client.connect(transport);
   const { tools: mcpTools } = await client.listTools();
 
-  return mcpTools.map(tool => new FunctionTool({
+  return mcpTools.map((tool: any) => new FunctionTool({
     name: `mcp__nanoclaw__${tool.name}`,
     description: tool.description || '',
-    // Convert JSON schema to Zod if possible, or use simplified schema
-    // ADK might accept JSON schema directly in newer versions or via `parameters`
-    // For now, we'll try to use a loose Zod schema that accepts any object if ADK enforces Zod
-    // Or we'll try to map it. Since tool.inputSchema is JSON schema, we can use it.
-    // NOTE: ADK FunctionTool expects a Zod schema for parameters.
-    // We will use z.any() for now to bypass strict validation here and let the MCP server validate.
     parameters: z.object({}).passthrough().describe('Parameters for the MCP tool'),
     execute: async (args) => {
       const result = await client.callTool({
@@ -285,10 +279,9 @@ async function main() {
 
       let finalResult = '';
       
-      // Use runner.run with correct arguments
-      for await (const event of runner.run(initialEvent, { sessionId })) {
+      // Use runner.runAsync instead of runner.run
+      for await (const event of runner.runAsync(initialEvent, { sessionId })) {
         if (event.type === 'agent_content') {
-          // Check if payload has content property
           const content = (event.payload as any).content;
           if (content) {
             finalResult += content;
