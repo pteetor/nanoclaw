@@ -11,11 +11,11 @@ import {
   LlmAgent, 
   FunctionTool, 
   Runner, 
-  Session, 
-  McpToolset, 
-  StdioServerParameters 
+  InMemorySessionService,
 } from '@google/adk';
 import { z } from 'zod';
+import { McpClient } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 interface ContainerInput {
   prompt: string;
@@ -146,6 +146,46 @@ const listFilesTool = new FunctionTool({
 });
 
 /**
+ * MCP Integration (Manual)
+ */
+async function createMcpTools(mcpServerPath: string, env: Record<string, string>) {
+  const transport = new StdioClientTransport({
+    command: 'node',
+    args: [mcpServerPath],
+    env,
+  });
+
+  const client = new McpClient({
+    name: 'maxwell-agent-runner',
+    version: '1.0.0',
+  }, {
+    capabilities: {}
+  });
+
+  await client.connect(transport);
+  const { tools: mcpTools } = await client.listTools();
+
+  return mcpTools.map(tool => new FunctionTool({
+    name: `mcp__nanoclaw__${tool.name}`,
+    description: tool.description || '',
+    // Convert JSON schema to Zod if possible, or use simplified schema
+    // ADK might accept JSON schema directly in newer versions or via `parameters`
+    // For now, we'll try to use a loose Zod schema that accepts any object if ADK enforces Zod
+    // Or we'll try to map it. Since tool.inputSchema is JSON schema, we can use it.
+    // NOTE: ADK FunctionTool expects a Zod schema for parameters.
+    // We will use z.any() for now to bypass strict validation here and let the MCP server validate.
+    parameters: z.object({}).passthrough().describe('Parameters for the MCP tool'),
+    execute: async (args) => {
+      const result = await client.callTool({
+        name: tool.name,
+        arguments: args,
+      });
+      return result;
+    },
+  }));
+}
+
+/**
  * IPC Handling
  */
 function drainIpcInput(): string[] {
@@ -200,16 +240,12 @@ async function main() {
     instructions += '\n\n' + fs.readFileSync(groupMaxwellMdPath, 'utf-8');
   }
 
-  // MCP integration
-  const mcpToolset = new McpToolset(new StdioServerParameters({
-    command: 'node',
-    args: [mcpServerPath],
-    env: {
-      NANOCLAW_CHAT_JID: containerInput.chatJid,
-      NANOCLAW_GROUP_FOLDER: containerInput.groupFolder,
-      NANOCLAW_IS_MAIN: containerInput.isMain ? '1' : '0',
-    }
-  }));
+  // Manual MCP integration
+  const mcpTools = await createMcpTools(mcpServerPath, {
+    NANOCLAW_CHAT_JID: containerInput.chatJid,
+    NANOCLAW_GROUP_FOLDER: containerInput.groupFolder,
+    NANOCLAW_IS_MAIN: containerInput.isMain ? '1' : '0',
+  });
 
   const agent = new LlmAgent({
     name: 'Maxwell',
@@ -220,17 +256,24 @@ async function main() {
       readFileTool,
       writeFileTool,
       listFilesTool,
-      mcpToolset,
+      ...mcpTools,
     ],
   });
 
-  const runner = new Runner(agent);
-  const session = new Session();
+  // Correct Runner instantiation with InMemorySessionService
+  const runner = new Runner({
+    agent,
+    appName: 'maxwell',
+    sessionService: new InMemorySessionService(),
+  });
 
   let prompt = containerInput.prompt;
   if (containerInput.isScheduledTask) {
     prompt = `[SCHEDULED TASK]\n\n${prompt}`;
   }
+
+  // Session ID for ADK
+  const sessionId = containerInput.sessionId || `session-${Date.now()}`;
 
   try {
     while (true) {
@@ -241,11 +284,17 @@ async function main() {
       };
 
       let finalResult = '';
-      for await (const event of runner.run(initialEvent, session)) {
+      
+      // Use runner.run with correct arguments
+      for await (const event of runner.run(initialEvent, { sessionId })) {
         if (event.type === 'agent_content') {
-          finalResult += event.payload.content;
+          // Check if payload has content property
+          const content = (event.payload as any).content;
+          if (content) {
+            finalResult += content;
+          }
         } else if (event.type === 'tool_code') {
-          log(`Calling tool: ${event.payload.toolName}`);
+          log(`Calling tool: ${(event.payload as any).toolName}`);
         } else if (event.type === 'tool_code_result') {
           log(`Tool result received`);
         }
@@ -254,7 +303,7 @@ async function main() {
       writeOutput({
         status: 'success',
         result: finalResult,
-        newSessionId: containerInput.sessionId,
+        newSessionId: sessionId,
       });
 
       log('Waiting for next IPC message...');
@@ -280,8 +329,6 @@ async function main() {
     log(`Agent error: ${err instanceof Error ? err.message : String(err)}`);
     writeOutput({ status: 'error', result: null, error: String(err) });
     process.exit(1);
-  } finally {
-    await mcpToolset.close();
   }
 }
 
