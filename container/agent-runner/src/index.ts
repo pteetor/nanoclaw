@@ -254,7 +254,6 @@ async function main() {
     ],
   });
 
-  // Correct Runner instantiation with InMemorySessionService
   const runner = new Runner({
     agent,
     appName: 'maxwell',
@@ -272,24 +271,32 @@ async function main() {
   try {
     while (true) {
       log(`Running agent turn...`);
-      const initialEvent = {
-        type: 'user_message' as const,
-        payload: { query: prompt },
-      };
+      
+      // Use correct arguments for runAsync: single object
+      const eventStream = runner.runAsync({
+        userId: containerInput.chatJid, // Use chat JID as user ID
+        sessionId,
+        newMessage: {
+          role: 'user',
+          parts: [{ text: prompt }]
+        }
+      });
 
       let finalResult = '';
       
-      // Use runner.runAsync instead of runner.run
-      for await (const event of runner.runAsync(initialEvent, { sessionId })) {
-        if (event.type === 'agent_content') {
-          const content = (event.payload as any).content;
-          if (content) {
-            finalResult += content;
+      for await (const event of eventStream) {
+        // Inspect content parts for text
+        if (event.content && event.content.parts) {
+          for (const part of event.content.parts) {
+            if (part.text) {
+              finalResult += part.text;
+            }
           }
-        } else if (event.type === 'tool_code') {
-          log(`Calling tool: ${(event.payload as any).toolName}`);
-        } else if (event.type === 'tool_code_result') {
-          log(`Tool result received`);
+        }
+        
+        // Log other activities (tool use might be in actions or content)
+        if (event.actions) {
+          log(`Action received: ${JSON.stringify(event.actions).slice(0, 100)}`);
         }
       }
       
