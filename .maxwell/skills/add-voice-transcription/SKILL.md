@@ -7,7 +7,7 @@ description: Add voice message transcription to NanoClaw using OpenAI's Whisper 
 
 This skill adds automatic voice message transcription using OpenAI's Whisper API. When users send voice notes in WhatsApp, they'll be transcribed and the agent can read and respond to the content.
 
-**UX Note:** When asking the user questions, prefer using the `AskUserQuestion` tool instead of just outputting text. This integrates with Claude's built-in question/answer system for a better experience.
+**UX Note:** When asking the user questions, prefer using the `AskUserQuestion` tool instead of just outputting text. This integrates with Maxwell's built-in question/answer system for a better experience.
 
 ## Prerequisites
 

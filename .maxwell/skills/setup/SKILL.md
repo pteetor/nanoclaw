@@ -7,7 +7,7 @@ description: Run initial NanoClaw setup. Use when user wants to install dependen
 
 Run all commands automatically. Only pause when user action is required (scanning QR codes).
 
-**UX Note:** When asking the user questions, prefer using the `AskUserQuestion` tool instead of just outputting text. This integrates with Claude's built-in question/answer system for a better experience.
+**UX Note:** When asking the user questions, prefer using the `AskUserQuestion` tool instead of just outputting text. This integrates with Maxwell's built-in question/answer system for a better experience.
 
 ## 1. Install Dependencies
 
@@ -73,17 +73,17 @@ Tell the user:
 
 **Use the `/convert-to-docker` skill** to convert the codebase to Docker, then continue to Section 3.
 
-## 3. Configure Claude Authentication
+## 3. Configure Maxwell Authentication
 
 Ask the user:
-> Do you want to use your **Claude subscription** (Pro/Max) or an **Anthropic API key**?
+> Do you want to use your **Maxwell subscription** (Pro/Max) or an **Anthropic API key**?
 
-### Option 1: Claude Subscription (Recommended)
+### Option 1: Maxwell Subscription (Recommended)
 
 Tell the user:
 > Open another terminal window and run:
 > ```
-> claude setup-token
+>.maxwell setup-token
 > ```
 > A browser window will open for you to log in. Once authenticated, the token will be displayed in your terminal. Either:
 > 1. Paste it here and I'll add it to `.env` for you, or
@@ -125,7 +125,7 @@ Build the NanoClaw agent container:
 ./container/build.sh
 ```
 
-This creates the `nanoclaw-agent:latest` image with Node.js, Chromium, Claude Code CLI, and agent-browser.
+This creates the `nanoclaw-agent:latest` image with Node.js, Chromium, Maxwell Code CLI, and agent-browser.
 
 Verify the build succeeded by running a simple test (this auto-detects which runtime you're using):
 
@@ -166,9 +166,9 @@ This step configures three things at once: the trigger word, the main channel ty
 ### 6a. Ask for trigger word
 
 Ask the user:
-> What trigger word do you want to use? (default: `Andy`)
+> What trigger word do you want to use? (default: `Maxwell`)
 >
-> In group chats, messages starting with `@TriggerWord` will be sent to Claude.
+> In group chats, messages starting with `@TriggerWord` will be sent to Maxwell.
 > In your main channel (and optionally solo chats), no prefix is needed — all messages are processed.
 
 Store their choice for use in the steps below.
@@ -264,9 +264,9 @@ mkdir -p data
 
 Then write `data/registered_groups.json` with the correct JID, trigger, and timestamp.
 
-If the user chose a name other than `Andy`, also update:
-1. `groups/global/CLAUDE.md` - Change "# Andy" and "You are Andy" to the new name
-2. `groups/main/CLAUDE.md` - Same changes at the top
+If the user chose a name other than `Maxwell`, also update:
+1. `groups/global/MAXWELL.md` - Change "# Maxwell" and "You are Maxwell" to the new name
+2. `groups/main/MAXWELL.md` - Same changes at the top
 
 Ensure the groups folder exists:
 ```bash
@@ -278,7 +278,7 @@ mkdir -p groups/main/logs
 Ask the user:
 > Do you want the agent to be able to access any directories **outside** the NanoClaw project?
 >
-> Examples: Git repositories, project folders, documents you want Claude to work on.
+> Examples: Git repositories, project folders, documents you want Maxwell to work on.
 >
 > **Note:** This is optional. Without configuration, agents can only access their own group folders.
 
@@ -459,7 +459,7 @@ The user should receive a response in WhatsApp.
 
 **Service not starting**: Check `logs/nanoclaw.error.log`
 
-**Container agent fails with "Claude Code process exited with code 1"**:
+**Container agent fails with "Maxwell Code process exited with code 1"**:
 - Ensure the container runtime is running:
   - Apple Container: `container system start`
   - Docker: `docker info` (start Docker Desktop on macOS, or `sudo systemctl start docker` on Linux)

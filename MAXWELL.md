@@ -1,10 +1,10 @@
 # NanoClaw
 
-Personal Claude assistant. See [README.md](README.md) for philosophy and setup. See [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) for architecture decisions.
+Personal Maxwell assistant (powered by Gemini). See [README.md](README.md) for philosophy and setup. See [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) for architecture decisions.
 
 ## Quick Context
 
-Single Node.js process that connects to WhatsApp, routes messages to Claude Agent SDK running in Apple Container (Linux VMs). Each group has isolated filesystem and memory.
+Single Node.js process that connects to WhatsApp, routes messages to Maxwell Agent runner (using Google ADK and Gemini) running in Apple Container (Linux VMs). Each group has isolated filesystem and memory.
 
 ## Key Files
 
@@ -18,7 +18,7 @@ Single Node.js process that connects to WhatsApp, routes messages to Claude Agen
 | `src/container-runner.ts` | Spawns agent containers with mounts |
 | `src/task-scheduler.ts` | Runs scheduled tasks |
 | `src/db.ts` | SQLite operations |
-| `groups/{name}/CLAUDE.md` | Per-group memory (isolated) |
+| `groups/{name}/MAXWELL.md` | Per-group memory (isolated) |
 | `container/skills/agent-browser.md` | Browser automation tool (available to all agents via Bash) |
 
 ## Skills

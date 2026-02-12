@@ -170,7 +170,7 @@ Update references in documentation files:
 
 | File | Find | Replace |
 |------|------|---------|
-| `CLAUDE.md` | "Apple Container (Linux VMs)" | "Docker containers" |
+| `MAXWELL.md` | "Apple Container (Linux VMs)" | "Docker containers" |
 | `README.md` | "Apple containers" | "Docker containers" |
 | `README.md` | "Apple Container" | "Docker" |
 | `README.md` | Requirements section | Update to show Docker instead |
@@ -186,7 +186,7 @@ Update references in documentation files:
 
 - macOS or Linux
 - Node.js 20+
-- [Claude Code](https://claude.ai/download)
+- [Maxwell Code](https:/.maxwell.ai/download)
 - [Docker](https://docker.com/products/docker-desktop)
 ```
 
@@ -206,7 +206,7 @@ Yes. NanoClaw uses Docker, which works on both macOS and Linux. Just install Doc
 
 ## 5. Update Skills
 
-### 5a. Update `.claude/skills/setup/SKILL.md`
+### 5a. Update `.maxwell/skills/setup/SKILL.md`
 
 Replace Section 2 "Install Apple Container" with Docker installation:
 
@@ -255,7 +255,7 @@ echo '{}' | docker run -i --entrypoint /bin/echo nanoclaw-agent:latest "Containe
 
 Update troubleshooting section to reference Docker commands.
 
-### 5b. Update `.claude/skills/debug/SKILL.md`
+### 5b. Update `.maxwell/skills/debug/SKILL.md`
 
 Replace all `container` commands with `docker` equivalents:
 
@@ -355,9 +355,9 @@ Check directory permissions on the host. The container runs as uid 1000.
 | `src/container-runner.ts` | Mount syntax, spawn command, comments |
 | `src/index.ts` | Startup check function |
 | `container/build.sh` | Build and run commands |
-| `CLAUDE.md` | Quick context |
+| `MAXWELL.md` | Quick context |
 | `README.md` | Requirements, FAQ |
 | `docs/REQUIREMENTS.md` | Architecture references |
 | `docs/SPEC.md` | Architecture diagram, tech stack |
-| `.claude/skills/setup/SKILL.md` | Installation instructions |
-| `.claude/skills/debug/SKILL.md` | Debug commands |
+| `.maxwell/skills/setup/SKILL.md` | Installation instructions |
+| `.maxwell/skills/debug/SKILL.md` | Debug commands |

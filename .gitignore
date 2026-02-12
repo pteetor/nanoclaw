@@ -9,14 +9,14 @@ store/
 data/
 logs/
 
-# Groups - only track base structure and specific CLAUDE.md files
+# Groups - only track base structure and specific MAXWELL.md files
 groups/*
 !groups/main/
 !groups/global/
 groups/main/*
 groups/global/*
-!groups/main/CLAUDE.md
-!groups/global/CLAUDE.md
+!groups/main/MAXWELL.md
+!groups/global/MAXWELL.md
 
 # Secrets
 *.keys.json

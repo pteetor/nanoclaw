@@ -18,7 +18,7 @@ Ask the user:
 >
 > **Option 1: Tool Mode**
 > - Agent can read and send emails when you ask it to
-> - Triggered only from WhatsApp (e.g., "@Andy check my email" or "@Andy send an email to...")
+> - Triggered only from WhatsApp (e.g., "@Maxwell check my email" or "@Maxwell send an email to...")
 > - Simpler setup, no email polling
 >
 > **Option 2: Channel Mode**
@@ -195,7 +195,7 @@ allowedTools: [
 
 Read `src/container-runner.ts` and find the `buildVolumeMounts` function.
 
-Add this mount block (after the `.claude` mount is a good location):
+Add this mount block (after the `.maxwell` mount is a good location):
 
 ```typescript
 // Gmail credentials directory
@@ -211,7 +211,7 @@ if (fs.existsSync(gmailDir)) {
 
 ### Step 3: Update Group Memory
 
-Append to `groups/CLAUDE.md` (the global memory file):
+Append to `groups/MAXWELL.md` (the global memory file):
 
 ```markdown
 
@@ -227,7 +227,7 @@ You have access to Gmail via MCP tools:
 Example: "Check my unread emails from today" or "Send an email to john@example.com about the meeting"
 ```
 
-Also append the same section to `groups/main/CLAUDE.md`.
+Also append the same section to `groups/main/MAXWELL.md`.
 
 ### Step 4: Rebuild and Restart
 
@@ -261,11 +261,11 @@ Tell the user:
 
 > Gmail integration is set up! Test it by sending this message in your WhatsApp main channel:
 >
-> `@Andy check my recent emails`
+> `@Maxwell check my recent emails`
 >
 > Or:
 >
-> `@Andy list my Gmail labels`
+> `@Maxwell list my Gmail labels`
 
 Watch the logs for any errors:
 
@@ -295,7 +295,7 @@ Ask the user:
 > - Uses Gmail's plus-addressing feature
 >
 > **Option C: Subject Prefix**
-> - Emails with a subject starting with a keyword (e.g., "[Andy]")
+> - Emails with a subject starting with a keyword (e.g., "[Maxwell]")
 > - Anyone can trigger the agent by using the prefix
 
 Also ask:
@@ -318,7 +318,7 @@ Store their choices for implementation.
 
 ### Step 1: Complete Tool Mode First
 
-Complete all Tool Mode steps above before continuing. Verify Gmail tools work by having the user test `@Andy check my recent emails`.
+Complete all Tool Mode steps above before continuing. Verify Gmail tools work by having the user test `@Maxwell check my recent emails`.
 
 ### Step 2: Add Email Polling Configuration
 
@@ -344,7 +344,7 @@ export const EMAIL_CHANNEL: EmailChannelConfig = {
   triggerValue: 'NanoClaw',  // the label name, address pattern, or prefix
   contextMode: 'thread',
   pollIntervalMs: 60000,  // Check every minute
-  replyPrefix: '[Andy] '
+  replyPrefix: '[Maxwell] '
 };
 ```
 
@@ -429,7 +429,7 @@ export async function checkForNewEmails(): Promise<EmailMessage[]> {
 
   // This requires calling Gmail MCP's search_emails tool
   // Implementation depends on how you want to invoke MCP from Node
-  // Option 1: Use @anthropic-ai/claude-agent-sdk with just gmail MCP
+  // Option 1: Use @anthropic-ai.maxwell-agent-sdk with just gmail MCP
   // Option 2: Run npx gmail MCP as subprocess and parse output
   // Option 3: Import gmail-autoauth-mcp directly
 
@@ -615,7 +615,7 @@ Create the email group directory and memory file:
 mkdir -p groups/email
 ```
 
-Write `groups/email/CLAUDE.md`:
+Write `groups/email/MAXWELL.md`:
 
 ```markdown
 # Email Channel
@@ -720,7 +720,7 @@ To remove Gmail entirely:
 
 4. Delete `src/email-channel.ts` (if created)
 
-5. Remove Gmail sections from `groups/*/CLAUDE.md`
+5. Remove Gmail sections from `groups/*/MAXWELL.md`
 
 6. Rebuild:
    ```bash

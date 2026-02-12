@@ -295,7 +295,7 @@ async function startMessageLoop(): Promise<void> {
   }
   messageLoopRunning = true;
 
-  logger.info(`NanoClaw running (trigger: @${ASSISTANT_NAME})`);
+  logger.info(`Maxwell running (trigger: @${ASSISTANT_NAME})`);
 
   while (true) {
     try {
@@ -421,7 +421,7 @@ function ensureContainerSystemRunning(): void {
         '║  2. Run: container system start                               ║',
       );
       console.error(
-        '║  3. Restart NanoClaw                                          ║',
+        '║  3. Restart Maxwell                                          ║',
       );
       console.error(
         '╚════════════════════════════════════════════════════════════════╝\n',
@@ -510,7 +510,7 @@ const isDirectRun =
 
 if (isDirectRun) {
   main().catch((err) => {
-    logger.error({ err }, 'Failed to start NanoClaw');
+    logger.error({ err }, 'Failed to start Maxwell');
     process.exit(1);
   });
 }

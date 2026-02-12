@@ -97,33 +97,17 @@ function buildVolumeMounts(
     }
   }
 
-  // Per-group Claude sessions directory (isolated from other groups)
-  // Each group gets their own .claude/ to prevent cross-group session access
+  // Per-group Maxwell sessions directory (isolated from other groups)
+  // Each group gets their own .maxwell/ to prevent cross-group session access
   const groupSessionsDir = path.join(
     DATA_DIR,
     'sessions',
     group.folder,
-    '.claude',
+    '.maxwell',
   );
   fs.mkdirSync(groupSessionsDir, { recursive: true });
-  const settingsFile = path.join(groupSessionsDir, 'settings.json');
-  if (!fs.existsSync(settingsFile)) {
-    fs.writeFileSync(settingsFile, JSON.stringify({
-      env: {
-        // Enable agent swarms (subagent orchestration)
-        // https://code.claude.com/docs/en/agent-teams#orchestrate-teams-of-claude-code-sessions
-        CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: '1',
-        // Load CLAUDE.md from additional mounted directories
-        // https://code.claude.com/docs/en/memory#load-memory-from-additional-directories
-        CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD: '1',
-        // Enable Claude's memory feature (persists user preferences between sessions)
-        // https://code.claude.com/docs/en/memory#manage-auto-memory
-        CLAUDE_CODE_DISABLE_AUTO_MEMORY: '0',
-      },
-    }, null, 2) + '\n');
-  }
 
-  // Sync skills from container/skills/ into each group's .claude/skills/
+  // Sync skills from container/skills/ into each group's .maxwell/skills/
   const skillsSrc = path.join(process.cwd(), 'container', 'skills');
   const skillsDst = path.join(groupSessionsDir, 'skills');
   if (fs.existsSync(skillsSrc)) {
@@ -141,7 +125,7 @@ function buildVolumeMounts(
   }
   mounts.push({
     hostPath: groupSessionsDir,
-    containerPath: '/home/node/.claude',
+    containerPath: '/home/node/.maxwell',
     readonly: false,
   });
 
@@ -158,13 +142,13 @@ function buildVolumeMounts(
   });
 
   // Environment file directory (workaround for Apple Container -i env var bug)
-  // Only expose specific auth variables needed by Claude Code, not the entire .env
+  // Only expose specific auth variables needed by Maxwell, not the entire .env
   const envDir = path.join(DATA_DIR, 'env');
   fs.mkdirSync(envDir, { recursive: true });
   const envFile = path.join(projectRoot, '.env');
   if (fs.existsSync(envFile)) {
     const envContent = fs.readFileSync(envFile, 'utf-8');
-    const allowedVars = ['CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_API_KEY'];
+    const allowedVars = ['GOOGLE_API_KEY', 'GEMINI_API_KEY'];
     const filteredLines = envContent.split('\n').filter((line) => {
       const trimmed = line.trim();
       if (!trimmed || trimmed.startsWith('#')) return false;

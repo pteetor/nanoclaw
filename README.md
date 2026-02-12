@@ -3,14 +3,14 @@
 </p>
 
 <p align="center">
-  My personal Claude assistant that runs securely in containers. Lightweight and built to be understood and customized for your own needs.
+  My personal Maxwell assistant that runs securely in containers. Lightweight and built to be understood and customized for your own needs.
 </p>
 
 <p align="center">
   <a href="https://discord.gg/VGWXrf8x"><img src="https://img.shields.io/discord/1470188214710046894?label=Discord&logo=discord&v=2" alt="Discord"></a>
 </p>
 
-**New:** First AI assistant to support [Agent Swarms](https://code.claude.com/docs/en/agent-teams). Spin up teams of agents that collaborate in your chat.
+**New:** First AI assistant to support [Agent Swarms](https://code./help.com/docs/en/agent-teams). Spin up teams of agents that collaborate in your chat.
 
 ## Why I Built This
 
@@ -23,33 +23,33 @@ NanoClaw gives you the same core functionality in a codebase you can understand 
 ```bash
 git clone https://github.com/gavrielc/nanoclaw.git
 cd nanoclaw
-claude
+/help
 ```
 
-Then run `/setup`. Claude Code handles everything: dependencies, authentication, container setup, service configuration.
+Then run `/setup`. Maxwell Code handles everything: dependencies, authentication, container setup, service configuration.
 
 ## Philosophy
 
-**Small enough to understand.** One process, a few source files. No microservices, no message queues, no abstraction layers. Have Claude Code walk you through it.
+**Small enough to understand.** One process, a few source files. No microservices, no message queues, no abstraction layers. Have Maxwell Code walk you through it.
 
 **Secure by isolation.** Agents run in Linux containers (Apple Container on macOS, or Docker). They can only see what's explicitly mounted. Bash access is safe because commands run inside the container, not on your host.
 
-**Built for one user.** This isn't a framework. It's working software that fits my exact needs. You fork it and have Claude Code make it match your exact needs.
+**Built for one user.** This isn't a framework. It's working software that fits my exact needs. You fork it and have Maxwell Code make it match your exact needs.
 
 **Customization = code changes.** No configuration sprawl. Want different behavior? Modify the code. The codebase is small enough that this is safe.
 
-**AI-native.** No installation wizard; Claude Code guides setup. No monitoring dashboard; ask Claude what's happening. No debugging tools; describe the problem, Claude fixes it.
+**AI-native.** No installation wizard; Maxwell Code guides setup. No monitoring dashboard; ask Maxwell what's happening. No debugging tools; describe the problem, Maxwell fixes it.
 
-**Skills over features.** Contributors shouldn't add features (e.g. support for Telegram) to the codebase. Instead, they contribute [claude code skills](https://code.claude.com/docs/en/skills) like `/add-telegram` that transform your fork. You end up with clean code that does exactly what you need.
+**Skills over features.** Contributors shouldn't add features (e.g. support for Telegram) to the codebase. Instead, they contribute [/help code skills](https://code./help.com/docs/en/skills) like `/add-telegram` that transform your fork. You end up with clean code that does exactly what you need.
 
-**Best harness, best model.** This runs on Claude Agent SDK, which means you're running Claude Code directly. The harness matters. A bad harness makes even smart models seem dumb, a good harness gives them superpowers. Claude Code is (IMO) the best harness available.
+**Best harness, best model.** This runs on Maxwell Agent SDK, which means you're running Maxwell Code directly. The harness matters. A bad harness makes even smart models seem dumb, a good harness gives them superpowers. Maxwell Code is (IMO) the best harness available.
 
 ## What It Supports
 
-- **WhatsApp I/O** - Message Claude from your phone
-- **Isolated group context** - Each group has its own `CLAUDE.md` memory, isolated filesystem, and runs in its own container sandbox with only that filesystem mounted
+- **WhatsApp I/O** - Message Maxwell from your phone
+- **Isolated group context** - Each group has its own `MAXWELL.md` memory, isolated filesystem, and runs in its own container sandbox with only that filesystem mounted
 - **Main channel** - Your private channel (self-chat) for admin control; every other group is completely isolated
-- **Scheduled tasks** - Recurring jobs that run Claude and can message you back
+- **Scheduled tasks** - Recurring jobs that run Maxwell and can message you back
 - **Web access** - Search and fetch content
 - **Container isolation** - Agents sandboxed in Apple Container (macOS) or Docker (macOS/Linux)
 - **Agent Swarms** - Spin up teams of specialized agents that collaborate on complex tasks (first personal AI assistant to support this)
@@ -57,24 +57,24 @@ Then run `/setup`. Claude Code handles everything: dependencies, authentication,
 
 ## Usage
 
-Talk to your assistant with the trigger word (default: `@Andy`):
+Talk to your assistant with the trigger word (default: `@Maxwell`):
 
 ```
-@Andy send an overview of the sales pipeline every weekday morning at 9am (has access to my Obsidian vault folder)
-@Andy review the git history for the past week each Friday and update the README if there's drift
-@Andy every Monday at 8am, compile news on AI developments from Hacker News and TechCrunch and message me a briefing
+@Maxwell send an overview of the sales pipeline every weekday morning at 9am (has access to my Obsidian vault folder)
+@Maxwell review the git history for the past week each Friday and update the README if there's drift
+@Maxwell every Monday at 8am, compile news on AI developments from Hacker News and TechCrunch and message me a briefing
 ```
 
 From the main channel (your self-chat), you can manage groups and tasks:
 ```
-@Andy list all scheduled tasks across groups
-@Andy pause the Monday briefing task
-@Andy join the Family Chat group
+@Maxwell list all scheduled tasks across groups
+@Maxwell pause the Monday briefing task
+@Maxwell join the Family Chat group
 ```
 
 ## Customizing
 
-There are no configuration files to learn. Just tell Claude Code what you want:
+There are no configuration files to learn. Just tell Maxwell Code what you want:
 
 - "Change the trigger word to @Bob"
 - "Remember in the future to make responses shorter and more direct"
@@ -83,13 +83,13 @@ There are no configuration files to learn. Just tell Claude Code what you want:
 
 Or run `/customize` for guided changes.
 
-The codebase is small enough that Claude can safely modify it.
+The codebase is small enough that Maxwell can safely modify it.
 
 ## Contributing
 
 **Don't add features. Add skills.**
 
-If you want to add Telegram support, don't create a PR that adds Telegram alongside WhatsApp. Instead, contribute a skill file (`.claude/skills/add-telegram/SKILL.md`) that teaches Claude Code how to transform a NanoClaw installation to use Telegram.
+If you want to add Telegram support, don't create a PR that adds Telegram alongside WhatsApp. Instead, contribute a skill file (`./help/skills/add-telegram/SKILL.md`) that teaches Maxwell Code how to transform a NanoClaw installation to use Telegram.
 
 Users then run `/add-telegram` on their fork and get clean code that does exactly what they need, not a bloated system trying to support every use case.
 
@@ -106,19 +106,19 @@ Skills we'd love to see:
 - `/setup-windows` - Windows via WSL2 + Docker
 
 **Session Management**
-- `/add-clear` - Add a `/clear` command that compacts the conversation (summarizes context while preserving critical information in the same session). Requires figuring out how to trigger compaction programmatically via the Claude Agent SDK.
+- `/add-clear` - Add a `/clear` command that compacts the conversation (summarizes context while preserving critical information in the same session). Requires figuring out how to trigger compaction programmatically via the Maxwell Agent SDK.
 
 ## Requirements
 
 - macOS or Linux
 - Node.js 20+
-- [Claude Code](https://claude.ai/download)
+- [Maxwell Code](https:///help.ai/download)
 - [Apple Container](https://github.com/apple/container) (macOS) or [Docker](https://docker.com/products/docker-desktop) (macOS/Linux)
 
 ## Architecture
 
 ```
-WhatsApp (baileys) --> SQLite --> Polling loop --> Container (Claude Agent SDK) --> Response
+WhatsApp (baileys) --> SQLite --> Polling loop --> Container (Maxwell Agent SDK) --> Response
 ```
 
 Single Node.js process. Agents execute in isolated Linux containers with mounted directories. Per-group message queue with concurrency control. IPC via filesystem.
@@ -132,7 +132,7 @@ Key files:
 - `src/container-runner.ts` - Spawns streaming agent containers
 - `src/task-scheduler.ts` - Runs scheduled tasks
 - `src/db.ts` - SQLite operations (messages, groups, sessions, state)
-- `groups/*/CLAUDE.md` - Per-group memory
+- `groups/*/MAXWELL.md` - Per-group memory
 
 ## FAQ
 
@@ -154,15 +154,15 @@ Agents run in containers, not behind application-level permission checks. They c
 
 **Why no configuration files?**
 
-We don't want configuration sprawl. Every user should customize it to so that the code matches exactly what they want rather than configuring a generic system. If you like having config files, tell Claude to add them.
+We don't want configuration sprawl. Every user should customize it to so that the code matches exactly what they want rather than configuring a generic system. If you like having config files, tell Maxwell to add them.
 
 **How do I debug issues?**
 
-Ask Claude Code. "Why isn't the scheduler running?" "What's in the recent logs?" "Why did this message not get a response?" That's the AI-native approach.
+Ask Maxwell Code. "Why isn't the scheduler running?" "What's in the recent logs?" "Why did this message not get a response?" That's the AI-native approach.
 
 **Why isn't the setup working for me?**
 
-I don't know. Run `claude`, then run `/debug`. If claude finds an issue that is likely affecting other users, open a PR to modify the setup SKILL.md.
+I don't know. Run `/help`, then run `/debug`. If /help finds an issue that is likely affecting other users, open a PR to modify the setup SKILL.md.
 
 **What changes will be accepted into the codebase?**
 

@@ -23,7 +23,7 @@ interface SkillResult {
 
 // Run a skill script as subprocess
 async function runScript(script: string, args: object): Promise<SkillResult> {
-  const scriptPath = path.join(process.cwd(), '.claude', 'skills', 'x-integration', 'scripts', `${script}.ts`);
+  const scriptPath = path.join(process.cwd(), '.maxwell', 'skills', 'x-integration', 'scripts', `${script}.ts`);
 
   return new Promise((resolve) => {
     const proc = spawn('npx', ['tsx', scriptPath], {

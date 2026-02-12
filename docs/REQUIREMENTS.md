@@ -32,9 +32,9 @@ No configuration sprawl. If you want different behavior, modify the code. The co
 
 ### AI-Native Development
 
-I don't need an installation wizard - Claude Code guides the setup. I don't need a monitoring dashboard - I ask Claude Code what's happening. I don't need elaborate logging UIs - I ask Claude to read the logs. I don't need debugging tools - I describe the problem and Claude fixes it.
+I don't need an installation wizard - Maxwell Code guides the setup. I don't need a monitoring dashboard - I ask Maxwell Code what's happening. I don't need elaborate logging UIs - I ask Maxwell to read the logs. I don't need debugging tools - I describe the problem and Maxwell fixes it.
 
-The codebase assumes you have an AI collaborator. It doesn't need to be excessively self-documenting or self-debugging because Claude is always there.
+The codebase assumes you have an AI collaborator. It doesn't need to be excessively self-documenting or self-debugging because Maxwell is always there.
 
 ### Skills Over Features
 
@@ -67,21 +67,21 @@ The project currently uses Apple Container (macOS-only). We need:
 
 ## Vision
 
-A personal Claude assistant accessible via WhatsApp, with minimal custom code.
+A personal Maxwell assistant accessible via WhatsApp, with minimal custom code.
 
 **Core components:**
-- **Claude Agent SDK** as the core agent
+- **Maxwell Agent SDK** as the core agent
 - **Apple Container** for isolated agent execution (Linux VMs)
 - **WhatsApp** as the primary I/O channel
 - **Persistent memory** per conversation and globally
-- **Scheduled tasks** that run Claude and can message back
+- **Scheduled tasks** that run Maxwell and can message back
 - **Web access** for search and browsing
 - **Browser automation** via agent-browser
 
 **Implementation approach:**
-- Use existing tools (WhatsApp connector, Claude Agent SDK, MCP servers)
+- Use existing tools (WhatsApp connector, Maxwell Agent SDK, MCP servers)
 - Minimal glue code
-- File-based systems where possible (CLAUDE.md for memory, folders for groups)
+- File-based systems where possible (MAXWELL.md for memory, folders for groups)
 
 ---
 
@@ -90,17 +90,17 @@ A personal Claude assistant accessible via WhatsApp, with minimal custom code.
 ### Message Routing
 - A router listens to WhatsApp and routes messages based on configuration
 - Only messages from registered groups are processed
-- Trigger: `@Andy` prefix (case insensitive), configurable via `ASSISTANT_NAME` env var
+- Trigger: `@Maxwell` prefix (case insensitive), configurable via `ASSISTANT_NAME` env var
 - Unregistered groups are ignored completely
 
 ### Memory System
-- **Per-group memory**: Each group has a folder with its own `CLAUDE.md`
-- **Global memory**: Root `CLAUDE.md` is read by all groups, but only writable from "main" (self-chat)
+- **Per-group memory**: Each group has a folder with its own `MAXWELL.md`
+- **Global memory**: Root `MAXWELL.md` is read by all groups, but only writable from "main" (self-chat)
 - **Files**: Groups can create/read files in their folder and reference them
-- Agent runs in the group's folder, automatically inherits both CLAUDE.md files
+- Agent runs in the group's folder, automatically inherits both MAXWELL.md files
 
 ### Session Management
-- Each group maintains a conversation session (via Claude Agent SDK)
+- Each group maintains a conversation session (via Maxwell Agent SDK)
 - Sessions auto-compact when context gets too long, preserving critical information
 
 ### Container Isolation
@@ -111,7 +111,7 @@ A personal Claude assistant accessible via WhatsApp, with minimal custom code.
 - Browser automation via agent-browser with Chromium in the container
 
 ### Scheduled Tasks
-- Users can ask Claude to schedule recurring or one-time tasks from any group
+- Users can ask Maxwell to schedule recurring or one-time tasks from any group
 - Tasks run as full agents in the context of the group that created them
 - Tasks have access to all tools including Bash (safe in container)
 - Tasks can optionally send messages to their group via `send_message` tool, or complete silently
@@ -128,7 +128,7 @@ A personal Claude assistant accessible via WhatsApp, with minimal custom code.
 
 ### Main Channel Privileges
 - Main channel is the admin/control group (typically self-chat)
-- Can write to global memory (`groups/CLAUDE.md`)
+- Can write to global memory (`groups/MAXWELL.md`)
 - Can schedule tasks for any group
 - Can view and manage tasks from all groups
 - Can configure additional directory mounts for any group
@@ -148,11 +148,11 @@ A personal Claude assistant accessible via WhatsApp, with minimal custom code.
 - Tools: `schedule_task`, `list_tasks`, `pause_task`, `resume_task`, `cancel_task`, `send_message`
 - Tasks stored in SQLite with run history
 - Scheduler loop checks for due tasks every minute
-- Tasks execute Claude Agent SDK in containerized group context
+- Tasks execute Maxwell Agent SDK in containerized group context
 
 ### Web Access
 - Built-in WebSearch and WebFetch tools
-- Standard Claude Agent SDK capabilities
+- Standard Maxwell Agent SDK capabilities
 
 ### Browser Automation
 - agent-browser CLI with Chromium in container
@@ -166,8 +166,8 @@ A personal Claude assistant accessible via WhatsApp, with minimal custom code.
 
 ### Philosophy
 - Minimal configuration files
-- Setup and customization done via Claude Code
-- Users clone the repo and run Claude Code to configure
+- Setup and customization done via Maxwell Code
+- Users clone the repo and run Maxwell Code to configure
 - Each user gets a custom setup matching their exact needs
 
 ### Skills
@@ -184,9 +184,9 @@ A personal Claude assistant accessible via WhatsApp, with minimal custom code.
 
 These are the creator's settings, stored here for reference:
 
-- **Trigger**: `@Andy` (case insensitive)
+- **Trigger**: `@Maxwell` (case insensitive)
 - **Response prefix**: `Andy:`
-- **Persona**: Default Claude (no custom personality)
+- **Persona**: Default Maxwell (no custom personality)
 - **Main channel**: Self-chat (messaging yourself in WhatsApp)
 
 ---

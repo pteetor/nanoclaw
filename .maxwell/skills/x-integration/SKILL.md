@@ -40,12 +40,12 @@ Before using this skill, ensure:
 
 ```bash
 # 1. Setup authentication (interactive)
-npx dotenv -e .env -- npx tsx .claude/skills/x-integration/scripts/setup.ts
+npx dotenv -e .env -- npx tsx .maxwell/skills/x-integration/scripts/setup.ts
 # Verify: data/x-auth.json should exist after successful login
 
 # 2. Rebuild container to include skill
 ./container/build.sh
-# Verify: Output shows "COPY .claude/skills/x-integration/agent.ts"
+# Verify: Output shows "COPY .maxwell/skills/x-integration/agent.ts"
 
 # 3. Rebuild host and restart service
 npm run build
@@ -135,7 +135,7 @@ Paths relative to project root:
 ### File Structure
 
 ```
-.claude/skills/x-integration/
+.maxwell/skills/x-integration/
 ├── SKILL.md          # This documentation
 ├── host.ts           # Host-side IPC handler
 ├── agent.ts          # Container-side MCP tool definitions
@@ -161,7 +161,7 @@ To integrate this skill into NanoClaw, make the following modifications:
 
 Add import after other local imports:
 ```typescript
-import { handleXIpc } from '../.claude/skills/x-integration/host.js';
+import { handleXIpc } from '../.maxwell/skills/x-integration/host.js';
 ```
 
 Modify `processTaskIpc` function's switch statement default case:
@@ -184,7 +184,7 @@ if (!handled) {
 
 Add import after `cron-parser` import:
 ```typescript
-// @ts-ignore - Copied during Docker build from .claude/skills/x-integration/
+// @ts-ignore - Copied during Docker build from .maxwell/skills/x-integration/
 import { createXTools } from './skills/x-integration/agent.js';
 ```
 
@@ -197,7 +197,7 @@ Add to the end of tools array (before the closing `]`):
 
 **3. Build script: `container/build.sh`**
 
-Change build context from `container/` to project root (required to access `.claude/skills/`):
+Change build context from `container/` to project root (required to access `.maxwell/skills/`):
 ```bash
 # Find:
 container build -t "${IMAGE_NAME}:${TAG}" .
@@ -211,7 +211,7 @@ container build -t "${IMAGE_NAME}:${TAG}" -f container/Dockerfile .
 
 **4. Dockerfile: `container/Dockerfile`**
 
-First, update the build context paths (required to access `.claude/skills/` from project root):
+First, update the build context paths (required to access `.maxwell/skills/` from project root):
 ```dockerfile
 # Find:
 COPY agent-runner/package*.json ./
@@ -227,7 +227,7 @@ COPY container/agent-runner/ ./
 Then add COPY line after `COPY container/agent-runner/ ./` and before `RUN npm run build`:
 ```dockerfile
 # Copy skill MCP tools
-COPY .claude/skills/x-integration/agent.ts ./src/skills/x-integration/
+COPY .maxwell/skills/x-integration/agent.ts ./src/skills/x-integration/
 ```
 
 ## Setup
@@ -246,7 +246,7 @@ echo "Chrome not found - update CHROME_PATH in .env"
 ### 2. Run Authentication
 
 ```bash
-npx dotenv -e .env -- npx tsx .claude/skills/x-integration/scripts/setup.ts
+npx dotenv -e .env -- npx tsx .maxwell/skills/x-integration/scripts/setup.ts
 ```
 
 This opens Chrome for manual X login. Session saved to `data/x-browser-profile/`.
@@ -314,26 +314,26 @@ ls -la data/x-browser-profile/ 2>/dev/null | head -5
 ### Re-authenticate (if expired)
 
 ```bash
-npx dotenv -e .env -- npx tsx .claude/skills/x-integration/scripts/setup.ts
+npx dotenv -e .env -- npx tsx .maxwell/skills/x-integration/scripts/setup.ts
 ```
 
 ### Test Post (will actually post)
 
 ```bash
-echo '{"content":"Test tweet - please ignore"}' | npx dotenv -e .env -- npx tsx .claude/skills/x-integration/scripts/post.ts
+echo '{"content":"Test tweet - please ignore"}' | npx dotenv -e .env -- npx tsx .maxwell/skills/x-integration/scripts/post.ts
 ```
 
 ### Test Like
 
 ```bash
-echo '{"tweetUrl":"https://x.com/user/status/123"}' | npx dotenv -e .env -- npx tsx .claude/skills/x-integration/scripts/like.ts
+echo '{"tweetUrl":"https://x.com/user/status/123"}' | npx dotenv -e .env -- npx tsx .maxwell/skills/x-integration/scripts/like.ts
 ```
 
 Or export `CHROME_PATH` manually before running:
 
 ```bash
 export CHROME_PATH="/path/to/chrome"
-echo '{"content":"Test"}' | npx tsx .claude/skills/x-integration/scripts/post.ts
+echo '{"content":"Test"}' | npx tsx .maxwell/skills/x-integration/scripts/post.ts
 ```
 
 ## Troubleshooting
@@ -341,7 +341,7 @@ echo '{"content":"Test"}' | npx tsx .claude/skills/x-integration/scripts/post.ts
 ### Authentication Expired
 
 ```bash
-npx dotenv -e .env -- npx tsx .claude/skills/x-integration/scripts/setup.ts
+npx dotenv -e .env -- npx tsx .maxwell/skills/x-integration/scripts/setup.ts
 launchctl kickstart -k gui/$(id -u)/com.nanoclaw
 ```
 

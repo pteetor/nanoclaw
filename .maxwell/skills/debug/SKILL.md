@@ -14,17 +14,17 @@ Host (macOS)                          Container (Linux VM)
 ─────────────────────────────────────────────────────────────
 src/container-runner.ts               container/agent-runner/
     │                                      │
-    │ spawns Apple Container               │ runs Claude Agent SDK
+    │ spawns Apple Container               │ runs Maxwell Agent SDK
     │ with volume mounts                   │ with MCP servers
     │                                      │
     ├── data/env/env ──────────────> /workspace/env-dir/env
     ├── groups/{folder} ───────────> /workspace/group
     ├── data/ipc/{folder} ────────> /workspace/ipc
-    ├── data/sessions/{folder}/.claude/ ──> /home/node/.claude/ (isolated per-group)
+    ├── data/sessions/{folder}/.maxwell/ ──> /home/node/.maxwell/ (isolated per-group)
     └── (main only) project root ──> /workspace/project
 ```
 
-**Important:** The container runs as user `node` with `HOME=/home/node`. Session files must be mounted to `/home/node/.claude/` (not `/root/.claude/`) for session resumption to work.
+**Important:** The container runs as user `node` with `HOME=/home/node`. Session files must be mounted to `/home/node/.maxwell/` (not `/root/.maxwell/`) for session resumption to work.
 
 ## Log Locations
 
@@ -33,7 +33,7 @@ src/container-runner.ts               container/agent-runner/
 | **Main app logs** | `logs/nanoclaw.log` | Host-side WhatsApp, routing, container spawning |
 | **Main app errors** | `logs/nanoclaw.error.log` | Host-side errors |
 | **Container run logs** | `groups/{folder}/logs/container-*.log` | Per-run: input, mounts, stderr, stdout |
-| **Claude sessions** | `~/.claude/projects/` | Claude Code session history |
+| **Maxwell sessions** | `~/.maxwell/projects/` | Maxwell Code session history |
 
 ## Enabling Debug Logging
 
@@ -55,7 +55,7 @@ Debug level shows:
 
 ## Common Issues
 
-### 1. "Claude Code process exited with code 1"
+### 1. "Maxwell Code process exited with code 1"
 
 **Check the container log file** in `groups/{folder}/logs/container-*.log`
 
@@ -116,7 +116,7 @@ Expected structure:
 ├── env-dir/env           # Environment file (CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY)
 ├── group/                # Current group folder (cwd)
 ├── project/              # Project root (main channel only)
-├── global/               # Global CLAUDE.md (non-main only)
+├── global/               # Global MAXWELL.md (non-main only)
 ├── ipc/                  # Inter-process communication
 │   ├── messages/         # Outgoing WhatsApp messages
 │   ├── tasks/            # Scheduled task commands
@@ -138,33 +138,33 @@ container run --rm --entrypoint /bin/bash nanoclaw-agent:latest -c '
 
 All of `/workspace/` and `/app/` should be owned by `node`.
 
-### 5. Session Not Resuming / "Claude Code process exited with code 1"
+### 5. Session Not Resuming / "Maxwell Code process exited with code 1"
 
-If sessions aren't being resumed (new session ID every time), or Claude Code exits with code 1 when resuming:
+If sessions aren't being resumed (new session ID every time), or Maxwell Code exits with code 1 when resuming:
 
-**Root cause:** The SDK looks for sessions at `$HOME/.claude/projects/`. Inside the container, `HOME=/home/node`, so it looks at `/home/node/.claude/projects/`.
+**Root cause:** The SDK looks for sessions at `$HOME/.maxwell/projects/`. Inside the container, `HOME=/home/node`, so it looks at `/home/node/.maxwell/projects/`.
 
 **Check the mount path:**
 ```bash
-# In container-runner.ts, verify mount is to /home/node/.claude/, NOT /root/.claude/
-grep -A3 "Claude sessions" src/container-runner.ts
+# In container-runner.ts, verify mount is to /home/node/.maxwell/, NOT /root/.maxwell/
+grep -A3 "Maxwell sessions" src/container-runner.ts
 ```
 
 **Verify sessions are accessible:**
 ```bash
 container run --rm --entrypoint /bin/bash \
-  -v ~/.claude:/home/node/.claude \
+  -v ~/.maxwell:/home/node/.maxwell \
   nanoclaw-agent:latest -c '
 echo "HOME=$HOME"
-ls -la $HOME/.claude/projects/ 2>&1 | head -5
+ls -la $HOME/.maxwell/projects/ 2>&1 | head -5
 '
 ```
 
-**Fix:** Ensure `container-runner.ts` mounts to `/home/node/.claude/`:
+**Fix:** Ensure `container-runner.ts` mounts to `/home/node/.maxwell/`:
 ```typescript
 mounts.push({
-  hostPath: claudeDir,
-  containerPath: '/home/node/.claude',  // NOT /root/.claude
+  hostPath:.maxwellDir,
+  containerPath: '/home/node/.maxwell',  // NOT /root/.maxwell
   readonly: false
 });
 ```
@@ -190,13 +190,13 @@ echo '{"prompt":"What is 2+2?","groupFolder":"test","chatJid":"test@g.us","isMai
   nanoclaw-agent:latest
 ```
 
-### Test Claude Code directly:
+### Test Maxwell Code directly:
 ```bash
 container run --rm --entrypoint /bin/bash \
   --mount "type=bind,source=$(pwd)/data/env,target=/workspace/env-dir,readonly" \
   nanoclaw-agent:latest -c '
   export $(cat /workspace/env-dir/env | xargs)
-  claude -p "Say hello" --dangerously-skip-permissions --allowedTools ""
+ .maxwell -p "Say hello" --dangerously-skip-permissions --allowedTools ""
 '
 ```
 
@@ -207,7 +207,7 @@ container run --rm -it --entrypoint /bin/bash nanoclaw-agent:latest
 
 ## SDK Options Reference
 
-The agent-runner uses these Claude Agent SDK options:
+The agent-runner uses these Maxwell Agent SDK options:
 
 ```typescript
 query({
@@ -223,7 +223,7 @@ query({
 })
 ```
 
-**Important:** `allowDangerouslySkipPermissions: true` is required when using `permissionMode: 'bypassPermissions'`. Without it, Claude Code exits with code 1.
+**Important:** `allowDangerouslySkipPermissions: true` is required when using `permissionMode: 'bypassPermissions'`. Without it, Maxwell Code exits with code 1.
 
 ## Rebuilding After Changes
 
@@ -250,8 +250,8 @@ container run --rm --entrypoint /bin/bash nanoclaw-agent:latest -c '
   echo "=== Node version ==="
   node --version
 
-  echo "=== Claude Code version ==="
-  claude --version
+  echo "=== Maxwell Code version ==="
+ .maxwell --version
 
   echo "=== Installed packages ==="
   ls /app/node_modules/
@@ -260,12 +260,12 @@ container run --rm --entrypoint /bin/bash nanoclaw-agent:latest -c '
 
 ## Session Persistence
 
-Claude sessions are stored per-group in `data/sessions/{group}/.claude/` for security isolation. Each group has its own session directory, preventing cross-group access to conversation history.
+Maxwell sessions are stored per-group in `data/sessions/{group}/.maxwell/` for security isolation. Each group has its own session directory, preventing cross-group access to conversation history.
 
 **Critical:** The mount path must match the container user's HOME directory:
 - Container user: `node`
 - Container HOME: `/home/node`
-- Mount target: `/home/node/.claude/` (NOT `/root/.claude/`)
+- Mount target: `/home/node/.maxwell/` (NOT `/root/.maxwell/`)
 
 To clear sessions:
 
@@ -274,7 +274,7 @@ To clear sessions:
 rm -rf data/sessions/
 
 # Clear sessions for a specific group
-rm -rf data/sessions/{groupFolder}/.claude/
+rm -rf data/sessions/{groupFolder}/.maxwell/
 
 # Also clear the session ID from NanoClaw's tracking (stored in SQLite)
 sqlite3 store/messages.db "DELETE FROM sessions WHERE group_folder = '{groupFolder}'"
@@ -333,7 +333,7 @@ echo -e "\n4. Container image exists?"
 echo '{}' | container run -i --entrypoint /bin/echo nanoclaw-agent:latest "OK" 2>/dev/null || echo "MISSING - run ./container/build.sh"
 
 echo -e "\n5. Session mount path correct?"
-grep -q "/home/node/.claude" src/container-runner.ts 2>/dev/null && echo "OK" || echo "WRONG - should mount to /home/node/.claude/, not /root/.claude/"
+grep -q "/home/node/.maxwell" src/container-runner.ts 2>/dev/null && echo "OK" || echo "WRONG - should mount to /home/node/.maxwell/, not /root/.maxwell/"
 
 echo -e "\n6. Groups directory?"
 ls -la groups/ 2>/dev/null || echo "MISSING - run setup"

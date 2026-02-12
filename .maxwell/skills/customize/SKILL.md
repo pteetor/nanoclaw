@@ -26,7 +26,7 @@ This skill helps users add capabilities or modify behavior. Use AskUserQuestion 
 | `src/config.ts` | Assistant name, trigger pattern, directories |
 | `src/db.ts` | Database initialization and queries |
 | `src/whatsapp-auth.ts` | Standalone WhatsApp authentication script |
-| `groups/CLAUDE.md` | Global memory/persona |
+| `groups/MAXWELL.md` | Global memory/persona |
 
 ## Common Customization Patterns
 
@@ -52,7 +52,7 @@ Questions to ask:
 
 Implementation:
 1. Add MCP server config to the container settings (see `src/container-runner.ts` for how MCP servers are mounted)
-2. Document available tools in `groups/CLAUDE.md`
+2. Document available tools in `groups/MAXWELL.md`
 
 ### Changing Assistant Behavior
 
@@ -61,8 +61,8 @@ Questions to ask:
 - Apply to all groups or specific ones?
 
 Simple changes → edit `src/config.ts`
-Persona changes → edit `groups/CLAUDE.md`
-Per-group behavior → edit specific group's `CLAUDE.md`
+Persona changes → edit `groups/MAXWELL.md`
+Per-group behavior → edit specific group's `MAXWELL.md`
 
 ### Adding New Commands
 
@@ -72,7 +72,7 @@ Questions to ask:
 - Does it need new MCP tools?
 
 Implementation:
-1. Commands are handled by the agent naturally — add instructions to `groups/CLAUDE.md` or the group's `CLAUDE.md`
+1. Commands are handled by the agent naturally — add instructions to `groups/MAXWELL.md` or the group's `MAXWELL.md`
 2. For trigger-level routing changes, modify `processGroupMessages()` in `src/index.ts`
 
 ### Changing Deployment
@@ -100,7 +100,7 @@ launchctl load ~/Library/LaunchAgents/com.nanoclaw.plist
 
 User: "Add Telegram as an input channel"
 
-1. Ask: "Should Telegram use the same @Andy trigger, or a different one?"
+1. Ask: "Should Telegram use the same @Maxwell trigger, or a different one?"
 2. Ask: "Should Telegram messages create separate conversation contexts, or share with WhatsApp groups?"
 3. Create `src/channels/telegram.ts` implementing the `Channel` interface (see `src/channels/whatsapp.ts`)
 4. Add the channel to `main()` in `src/index.ts`

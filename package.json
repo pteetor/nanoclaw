@@ -1,7 +1,7 @@
 {
   "name": "nanoclaw",
   "version": "1.0.0",
-  "description": "Personal Claude assistant. Lightweight, secure, customizable.",
+  "description": "Personal Maxwell assistant (Gemini). Lightweight, secure, customizable.",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

@@ -233,11 +233,11 @@ if (TELEGRAM_BOT_POOL.length > 0) {
 }
 ```
 
-### Step 5: Update CLAUDE.md Files
+### Step 5: Update MAXWELL.md Files
 
 #### 5a. Add global message formatting rules
 
-Read `groups/global/CLAUDE.md` and add a Message Formatting section:
+Read `groups/global/MAXWELL.md` and add a Message Formatting section:
 
 ```markdown
 ## Message Formatting
@@ -251,9 +251,9 @@ NEVER use markdown. Only use WhatsApp/Telegram formatting:
 No ## headings. No [links](url). No **double stars**.
 ```
 
-#### 5b. Update existing group CLAUDE.md headings
+#### 5b. Update existing group MAXWELL.md headings
 
-In any group CLAUDE.md that has a "WhatsApp Formatting" section (e.g. `groups/main/CLAUDE.md`), rename the heading to reflect multi-channel support:
+In any group MAXWELL.md that has a "WhatsApp Formatting" section (e.g. `groups/main/MAXWELL.md`), rename the heading to reflect multi-channel support:
 
 ```
 ## WhatsApp Formatting (and other messaging apps)
@@ -261,7 +261,7 @@ In any group CLAUDE.md that has a "WhatsApp Formatting" section (e.g. `groups/ma
 
 #### 5c. Add Agent Teams instructions to Telegram groups
 
-For each Telegram group that will use agent teams, create or update its `groups/{folder}/CLAUDE.md` with these instructions. Read the existing CLAUDE.md first (or `groups/global/CLAUDE.md` as a base) and add the Agent Teams section:
+For each Telegram group that will use agent teams, create or update its `groups/{folder}/MAXWELL.md` with these instructions. Read the existing MAXWELL.md first (or `groups/global/MAXWELL.md` as a base) and add the Agent Teams section:
 
 ```markdown
 ## Agent Teams
@@ -365,7 +365,7 @@ Telegram caches bot names client-side. The 2-second delay after `setMyName` help
 
 ### Subagents not using send_message
 
-Check the group's `CLAUDE.md` has the Agent Teams instructions. The lead agent reads this when creating teammates and must include the `send_message` + `sender` instructions in each teammate's prompt.
+Check the group's `MAXWELL.md` has the Agent Teams instructions. The lead agent reads this when creating teammates and must include the `send_message` + `sender` instructions in each teammate's prompt.
 
 ## Removal
 
@@ -376,6 +376,6 @@ To remove Agent Swarm support while keeping basic Telegram:
 3. Remove pool routing from IPC handler in `src/index.ts` (revert to plain `sendMessage`)
 4. Remove `initBotPool` call from `main()`
 5. Remove `sender` param from MCP tool in `container/agent-runner/src/ipc-mcp-stdio.ts`
-6. Remove Agent Teams section from group CLAUDE.md files
+6. Remove Agent Teams section from group MAXWELL.md files
 7. Remove `TELEGRAM_BOT_POOL` from `.env`, `data/env/env`, and launchd plist
 8. Rebuild: `npm run build && ./container/build.sh && launchctl unload ~/Library/LaunchAgents/com.nanoclaw.plist && launchctl load ~/Library/LaunchAgents/com.nanoclaw.plist`
